@@ -30,8 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_half_page import (
     get_vertical_intel, get_rep, load_instructions,
     fetch_site_context, safe_filename, clean_company_name,
-    extract_company_name_from_site, generate_content,
-    generate_headline, build_html_page, html_to_pdf
+    generate_content, generate_headline, build_html_page, html_to_pdf
 )
 from openai import OpenAI
 from anthropic import Anthropic
@@ -90,7 +89,7 @@ if submitted:
         headline_data = generate_headline(anthropic_client, content["content_brief"])
 
     with st.spinner("Building PDF..."):
-        clean_name = extract_company_name_from_site(website, clean_company_name(company_name))
+        clean_name = clean_company_name(company_name)
         rep = get_rep(rep_name)
         html = build_html_page(
             company_name=clean_name,
