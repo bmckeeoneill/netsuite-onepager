@@ -1,0 +1,43 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2868
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 To Run Vw \
+\
+cd ~/Desktop/NetSuite/One_page_builder\
+mkdir -p one_pagers_out && python3 build_10_one_pagers.py && open one_pagers_out\
+\
+To run one company copy this - change company name (needs to be on the team ccv) \
+\
+cd ~/Desktop/NetSuite/One_page_builder\
+python3 - <<'PY'\
+import os, pandas as pd, importlib.util\
+spec = importlib.util.spec_from_file_location("builder", "build_10_one_pagers.py")\
+mod = importlib.util.load_from_spec(spec)\
+spec.loader.exec_module(mod)\
+df = pd.read_csv("team_tal.csv", encoding="latin1")\
+df.columns = [c.strip().lower() for c in df.columns]\
+df = df[df["name"].str.contains("COMPANY NAME HERE", case=False, na=False)].head(1).reset_index(drop=True)\
+from openai import OpenAI\
+from anthropic import Anthropic\
+openai_client = OpenAI()\
+anthropic_client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])\
+instructions = mod.load_instructions()\
+os.makedirs("one_pagers_out", exist_ok=True)\
+for _, row in df.iterrows():\
+    row_dict = row.to_dict()\
+    lead_name = str(row.iloc[0])\
+    domain = str(row.iloc[1])\
+    site_context = mod.fetch_site_context(domain)\
+    content = mod.generate_content(openai_client, instructions, lead_name, domain, site_context, row_dict)\
+    headline_data = mod.generate_headline(anthropic_client, content["content_brief"])\
+    company_name = mod.extract_company_name_from_site(domain, mod.clean_company_name(lead_name))\
+    rep = mod.get_rep(str(row_dict.get("sales rep", "")))\
+    base = mod.safe_filename(lead_name)\
+    html = mod.build_html_page(company_name, headline_data["headline"], headline_data["subheadline"], content["hear_bullets"], content["triplets"], content["roi"], rep)\
+    mod.html_to_pdf(html, os.path.join("one_pagers_out", base + ".pdf"))\
+    print(f"Saved: \{base\}")\
+PY}
