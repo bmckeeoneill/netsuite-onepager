@@ -1,13 +1,7 @@
 import os
-import re
-import json
+import sys
 import tempfile
-import requests
 import streamlit as st
-from bs4 import BeautifulSoup
-from openai import OpenAI
-from anthropic import Anthropic
-from playwright.sync_api import sync_playwright
 
 # ── Page config ──
 st.set_page_config(page_title="NetSuite One-Pager Generator", page_icon="🔷", layout="centered")
@@ -21,7 +15,7 @@ def check_password():
     st.title("NetSuite One-Pager Generator")
     pwd = st.text_input("Enter passcode", type="password")
     if st.button("Enter"):
-        if pwd == os.environ.get("APP_PASSCODE", "netsuite2025"):
+        if pwd == os.environ.get("APP_PASSCODE", "netsuite2026"):
             st.session_state.authenticated = True
             st.rerun()
         else:
@@ -31,11 +25,16 @@ def check_password():
 if not check_password():
     st.stop()
 
-# ── Import pipeline from build_half_page ──
-import importlib.util, sys
-spec = importlib.util.spec_from_file_location("builder", "build_half_page.py")
-mod = importlib.util.load_from_spec(spec)
-spec.loader.exec_module(mod)
+# ── Import pipeline ──
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_half_page import (
+    get_vertical_intel, get_rep, load_instructions,
+    fetch_site_context, safe_filename, clean_company_name,
+    extract_company_name_from_site, generate_content,
+    generate_headline, build_html_page, html_to_pdf
+)
+from openai import OpenAI
+from anthropic import Anthropic
 
 # ── UI ──
 st.title("🔷 NetSuite One-Pager Generator")
@@ -71,29 +70,29 @@ if submitted:
     anthropic_client = Anthropic(api_key=anthropic_key)
 
     with st.spinner("Researching company website..."):
-        site_context = mod.fetch_site_context(website)
+        site_context = fetch_site_context(website)
 
     with st.spinner("Generating content with GPT-4o..."):
-        instructions = mod.load_instructions()
-        vertical_intel = mod.get_vertical_intel(vertical)
+        instructions = load_instructions()
+        vertical_intel = get_vertical_intel(vertical)
         row_dict = {
             "name": company_name,
             "web address": website,
             "vertical": vertical,
             "sales rep": rep_name,
         }
-        content = mod.generate_content(
+        content = generate_content(
             openai_client, instructions, company_name,
             website, site_context, row_dict, vertical_intel
         )
 
     with st.spinner("Writing headline with Claude..."):
-        headline_data = mod.generate_headline(anthropic_client, content["content_brief"])
+        headline_data = generate_headline(anthropic_client, content["content_brief"])
 
     with st.spinner("Building PDF..."):
-        clean_name = mod.extract_company_name_from_site(website, mod.clean_company_name(company_name))
-        rep = mod.get_rep(rep_name)
-        html = mod.build_html_page(
+        clean_name = extract_company_name_from_site(website, clean_company_name(company_name))
+        rep = get_rep(rep_name)
+        html = build_html_page(
             company_name=clean_name,
             headline=headline_data["headline"],
             subheadline=headline_data["subheadline"],
@@ -105,12 +104,12 @@ if submitted:
         )
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
             pdf_path = tmp.name
-        mod.html_to_pdf(html, pdf_path)
+        html_to_pdf(html, pdf_path)
 
     with open(pdf_path, "rb") as f:
         pdf_bytes = f.read()
 
-    filename = mod.safe_filename(company_name) + "_half.pdf"
+    filename = safe_filename(company_name) + "_half.pdf"
     st.success("✅ One-pager ready!")
     st.download_button(
         label="⬇️ Download PDF",
