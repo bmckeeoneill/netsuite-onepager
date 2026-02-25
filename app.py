@@ -1,7 +1,11 @@
 import os
 import sys
 import tempfile
+import subprocess
 import streamlit as st
+
+# Install Playwright browser on first run
+subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=False)
 
 # ── Page config ──
 st.set_page_config(page_title="NetSuite One-Pager Generator", page_icon="🔷", layout="centered")
