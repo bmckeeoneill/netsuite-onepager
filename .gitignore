@@ -1,0 +1,7 @@
+*.csv
+one_pagers_out/
+*.pdf
+*.email.txt
+.DS_Store
+__pycache__/
+*.pyc
