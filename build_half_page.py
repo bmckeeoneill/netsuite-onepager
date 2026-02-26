@@ -680,7 +680,7 @@ def generate_content(openai_client: OpenAI, instructions: str,
     current_system = str(row.get("current system", "")).strip()
     rep_notes = str(row.get("rep notes", "")).strip()
     system_context = f"Current system they are replacing: {current_system}" if current_system else ""
-    notes_context = f"Rep intel (use this to personalize content — this is gold):\n{rep_notes}" if rep_notes else ""
+    notes_context = f"REP INTEL — HIGHEST PRIORITY: The rep has provided the following notes from actual discovery or research. This must directly shape the challenges, solutions, and north star outcomes. Do not ignore this. Do not treat it as background. Write as if you know these specific facts about the company:\n{rep_notes}" if rep_notes else ""
     user_msg = f"""Company: {lead_name}
 Website: {domain}
 
@@ -746,6 +746,8 @@ You are building content for a NetSuite sales one-pager. Return a JSON object wi
 }}
 
 CRITICAL RULES - violating these makes the output useless:
+0. REP INTEL RULE — If "REP INTEL" is provided above, it overrides everything else. At least 2 of the 4 challenge/solution pairs must directly reflect what the rep told you. The north star outcomes must also reflect it. If the rep says the CFO is frustrated with month-end close, that goes in. If they say they just opened a new location, that goes in. Do not dilute it with generic content.
+
 1. BANNED GENERIC TERMS - never use these as challenge or solution titles:
    "Operational Efficiency", "Customer Experience", "Business Growth", "Digital Transformation",
    "Automated Workflows", "Centralized Operations", "Streamlined Processes", "Better Visibility",
@@ -765,6 +767,8 @@ CRITICAL RULES - violating these makes the output useless:
    Good: "Cut peak-season stockouts by 40% across all resort locations"
 
 5. Use the website context and vertical field to inform every specific detail.
+
+6. CURRENT SYSTEM RULE — If a current system is provided, reference it by name in at least one challenge. Frame it as a specific limitation, not a generic one. Example: if they are on QuickBooks, write "QuickBooks has no native multi-location inventory" not "their current system lacks visibility."
 
 Return only valid JSON, no markdown fences.
 """
