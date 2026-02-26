@@ -61,8 +61,7 @@ with st.form("generator"):
     rep_notes = st.text_area("What do you know about this company?",
         placeholder="e.g. CFO mentioned they're struggling with month-end close, recently opened a 3rd location, looking to replace QuickBooks by Q3...",
         height=100)
-    company_logo_url = st.text_input("Company Logo URL (optional)",
-        placeholder="Right-click the logo on their website → 'Copy image address' → paste here")
+
     submitted = st.form_submit_button("Generate One-Pager")
 
 if submitted:
@@ -114,7 +113,6 @@ if submitted:
             roi=content["roi"],
             rep=rep,
             north_star=content.get("north_star", []),
-            company_logo_url=company_logo_url,
         )
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
             pdf_path = tmp.name

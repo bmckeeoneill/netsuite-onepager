@@ -174,8 +174,7 @@ BANNER_HTML_TEMPLATE = """
     <div class="subheadline">{subheadline}</div>
   </div>
   <div class="banner-right">
-    {company_logo_html}
-    <img class="ns-logo" src="{logo_url}" alt="NetSuite logo">
+      <img class="ns-logo" src="{logo_url}" alt="NetSuite logo">
   </div>
 </div>
 """
@@ -256,13 +255,6 @@ html, body { margin: 0; padding: 0; }
   max-width: 110px;
   max-height: 38px;
   object-fit: contain;
-}
-.company-logo {
-  max-width: 100px;
-  max-height: 32px;
-  object-fit: contain;
-  margin-bottom: 4px;
-  opacity: 0.9;
 }
 .contact {
   font-size: 9.5px;
@@ -1024,26 +1016,14 @@ def build_roi_html(roi: dict) -> str:
 
 
 def build_html_page(company_name: str, headline: str, subheadline: str,
-                    hear_bullets: list, triplets: list, roi: dict, rep: dict = None, north_star: list = None,
-                    company_logo_url: str = "") -> str:
+                    hear_bullets: list, triplets: list, roi: dict, rep: dict = None, north_star: list = None) -> str:
     rep = rep or DEFAULT_REP
     company_logo_html = ""
-    if company_logo_url:
-        try:
-            import requests, base64, mimetypes
-            resp = requests.get(company_logo_url, timeout=5, headers={"User-Agent": "Mozilla/5.0"})
-            if resp.status_code == 200:
-                ct = resp.headers.get("content-type", "image/png").split(";")[0]
-                b64 = base64.b64encode(resp.content).decode()
-                company_logo_html = f'<img class="company-logo" src="data:{ct};base64,{b64}" alt="Company logo">'
-        except Exception:
-            pass
     banner = BANNER_HTML_TEMPLATE.format(
         company_name=company_name,
         headline=headline,
         subheadline=subheadline,
         logo_url=NETSUITE_LOGO_URL,
-        company_logo_html=company_logo_html,
     )
     cs = build_cs_html(triplets)
     north_star_html = build_north_star_html(north_star or [])
