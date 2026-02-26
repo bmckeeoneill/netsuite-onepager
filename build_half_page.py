@@ -1016,8 +1016,10 @@ def build_roi_html(roi: dict) -> str:
 
 
 def build_html_page(company_name: str, headline: str, subheadline: str,
-                    hear_bullets: list, triplets: list, roi: dict, rep: dict = None, north_star: list = None) -> str:
+                    hear_bullets: list, triplets: list, roi: dict, rep: dict = None, north_star: list = None,
+                    cta: str = "") -> str:
     rep = rep or DEFAULT_REP
+    cta_text = cta if cta else "Open to 15 minutes next week to map this to your current process?"
     company_logo_html = ""
     banner = BANNER_HTML_TEMPLATE.format(
         company_name=company_name,
@@ -1041,7 +1043,7 @@ def build_html_page(company_name: str, headline: str, subheadline: str,
   {north_star_html}
   <div class="bottom-band">
     <div class="cta">
-      Open to 15 minutes next week to map this to your current process?
+      {cta_text}
       <span>{rep["name"]} &nbsp;|&nbsp; {rep["email"]} &nbsp;|&nbsp; {rep["phone"]} &nbsp;|&nbsp; <a href="https://www.netsuite.com/portal/resource/demo.shtml" style="color:#D6B66A;">Request a Demo</a></span>
     </div>
   </div>

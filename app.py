@@ -76,6 +76,12 @@ st.caption("Enter a company name and website to generate a personalized half-pag
 with st.form("generator"):
     company_name = st.text_input("Company Name", placeholder="e.g. Christy Sports")
     website = st.text_input("Website URL", placeholder="e.g. https://www.christysports.com")
+    cta_option = st.selectbox("Call to Action", [
+        "Open to 15 minutes next week to map this to your current process?",
+        "Ready to see this live? Let's set up a personalized demo.",
+        "Share this with your team and we'll follow up to answer any questions.",
+        "No pressure — just wanted to put this on your radar.",
+    ])
     vertical = st.selectbox("Vertical", [
         "Manufacturing", "Retail", "Apparel, Footwear & Accessories",
         "Food & Beverage", "Health & Beauty", "Wholesale/Distribution",
@@ -143,6 +149,7 @@ if submitted:
             roi=content["roi"],
             rep=rep,
             north_star=content.get("north_star", []),
+            cta=cta_option,
         )
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
             pdf_path = tmp.name
