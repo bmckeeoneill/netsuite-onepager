@@ -1053,7 +1053,7 @@ def build_html_page(company_name: str, headline: str, subheadline: str,
   <div class="bottom-band">
     <div class="cta">
       Open to 15 minutes next week to map this to your current process?
-      <span>{rep["name"]} &nbsp;|&nbsp; {rep["email"]} &nbsp;|&nbsp; {rep["phone"]}</span>
+      <span>{rep["name"]} &nbsp;|&nbsp; {rep["email"]} &nbsp;|&nbsp; {rep["phone"]} &nbsp;|&nbsp; <a href="https://www.netsuite.com/portal/demo.shtml" style="color:#D6B66A;">Request a Demo</a></span>
     </div>
   </div>
 </div>
