@@ -677,6 +677,10 @@ def generate_content(openai_client: OpenAI, instructions: str,
     row_text = "\n".join(f"{k}: {v}" for k, v in row.items())
 
     vertical_context = ("Vertical Intelligence (use this to write specific, credible content):\n" + vertical_intel) if vertical_intel else ""
+    current_system = str(row.get("current system", "")).strip()
+    rep_notes = str(row.get("rep notes", "")).strip()
+    system_context = f"Current system they are replacing: {current_system}" if current_system else ""
+    notes_context = f"Rep intel (use this to personalize content — this is gold):\n{rep_notes}" if rep_notes else ""
     user_msg = f"""Company: {lead_name}
 Website: {domain}
 
@@ -687,6 +691,8 @@ Website context (scraped):
 {site_context or '(none available)'}
 
 {vertical_context}
+{system_context}
+{notes_context}
 
 Instructions:
 {instructions}
