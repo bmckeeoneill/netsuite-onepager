@@ -536,6 +536,14 @@ html, body { margin: 0; padding: 0; }
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.cs-card.known .cs-card-title {
+  font-size: 8.5px;
+  margin-bottom: 1px;
+}
+.cs-card.known p {
+  -webkit-line-clamp: 1;
+  font-size: 7.5px;
+}
 
 /* ── North Star Outcomes ── */
 .north-star {
