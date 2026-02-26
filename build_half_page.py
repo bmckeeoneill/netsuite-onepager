@@ -928,7 +928,7 @@ def build_cs_html(triplets: list) -> str:
             known = known.lower() == 'true'
         known_class = " known" if known else ""
         known_label_c = '<div class="known-label">● From our conversation</div>' if known else ""
-        known_label_s = '<div class="known-label">● Tailored to your situation</div>' if known else ""
+        known_label_s = '<div class="known-label">● NetSuite native</div>' if known else ""
         challenges += f"""
     <div class="cs-card challenge{known_class}">
       {known_label_c}
