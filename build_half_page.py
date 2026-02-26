@@ -498,6 +498,22 @@ html, body { margin: 0; padding: 0; }
   background: #FFFFFF;
   border-left: 3px solid #425D73;
 }
+.cs-card.challenge.known {
+  background: #FBF6EC;
+  border-left: 3px solid #D6B66A;
+}
+.cs-card.solution.known {
+  background: #FFFDF5;
+  border-left: 3px solid #D6B66A;
+}
+.known-label {
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #D6B66A;
+  margin-bottom: 3px;
+}
 .cs-card-title {
   font-size: 9.5px;
   font-weight: 700;
@@ -705,15 +721,16 @@ You are building content for a NetSuite sales one-pager. Return a JSON object wi
   "triplets": [
     {{
       "challenge_title": "2-4 words, names the SPECIFIC operational problem, not a category. Bad: 'Operational Efficiency'. Good: 'Rental Fleet Tracking'",
-      "challenge": "One sentence. Must reference something specific to THIS company's business model or vertical. No generic ERP pain points.",
+      "challenge": "One sentence. Must reference something specific to THIS company's business model or vertical. No generic ERP pain points. Do NOT mention the company name.",
       "solution_title": "2-4 words, names the SPECIFIC NetSuite capability that solves it. Bad: 'Automated Workflows'. Good: 'Real-Time Rental Tracking'",
       "solution": "One sentence. Name the specific NetSuite module or feature. No vague statements like 'NetSuite streamlines processes'.",
       "outcome_title": "2-4 words, a concrete result. Bad: 'Better Efficiency'. Good: 'Faster Season Closeout'",
-      "outcome": "One sentence. A specific measurable result this type of company would care about."
+      "outcome": "One sentence. A specific measurable result this type of company would care about.",
+      "known": "true if this pain point came directly from rep intel or current system info, false if it is an industry-level assumption"
     }},
-    {{"challenge_title": "...", "challenge": "...", "solution_title": "...", "solution": "...", "outcome_title": "...", "outcome": "..."}},
-    {{"challenge_title": "...", "challenge": "...", "solution_title": "...", "solution": "...", "outcome_title": "...", "outcome": "..."}},
-    {{"challenge_title": "...", "challenge": "...", "solution_title": "...", "solution": "...", "outcome_title": "...", "outcome": "..."}}
+    {{"challenge_title": "...", "challenge": "...", "solution_title": "...", "solution": "...", "outcome_title": "...", "outcome": "...", "known": false}},
+    {{"challenge_title": "...", "challenge": "...", "solution_title": "...", "solution": "...", "outcome_title": "...", "outcome": "...", "known": false}},
+    {{"challenge_title": "...", "challenge": "...", "solution_title": "...", "solution": "...", "outcome_title": "...", "outcome": "...", "known": false}}
   ],
   "hear_bullets": [
     {{"title": "Short bold problem statement, 4-7 words, no verb endings like -ing", "consequence": "One sentence: what goes wrong because of this problem, specific to their vertical"}},
@@ -906,13 +923,21 @@ def build_cs_html(triplets: list) -> str:
     challenges = ""
     solutions = ""
     for t in triplets:
+        known = t.get('known', False)
+        if isinstance(known, str):
+            known = known.lower() == 'true'
+        known_class = " known" if known else ""
+        known_label_c = '<div class="known-label">● From our conversation</div>' if known else ""
+        known_label_s = '<div class="known-label">● Tailored to your situation</div>' if known else ""
         challenges += f"""
-    <div class="cs-card challenge">
+    <div class="cs-card challenge{known_class}">
+      {known_label_c}
       <div class="cs-card-title">{t.get('challenge_title','')}</div>
       <p>{t.get('challenge','')}</p>
     </div>"""
         solutions += f"""
-    <div class="cs-card solution">
+    <div class="cs-card solution{known_class}">
+      {known_label_s}
       <div class="cs-card-title">{t.get('solution_title','')}</div>
       <p>{t.get('solution','')}</p>
     </div>"""
