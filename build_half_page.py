@@ -262,7 +262,6 @@ html, body { margin: 0; padding: 0; }
   max-height: 32px;
   object-fit: contain;
   margin-bottom: 4px;
-  filter: brightness(0) invert(1);
   opacity: 0.9;
 }
 .contact {
@@ -1028,7 +1027,17 @@ def build_html_page(company_name: str, headline: str, subheadline: str,
                     hear_bullets: list, triplets: list, roi: dict, rep: dict = None, north_star: list = None,
                     company_logo_url: str = "") -> str:
     rep = rep or DEFAULT_REP
-    company_logo_html = f'<img class="company-logo" src="{company_logo_url}" alt="Company logo">' if company_logo_url else ""
+    company_logo_html = ""
+    if company_logo_url:
+        try:
+            import requests, base64, mimetypes
+            resp = requests.get(company_logo_url, timeout=5, headers={"User-Agent": "Mozilla/5.0"})
+            if resp.status_code == 200:
+                ct = resp.headers.get("content-type", "image/png").split(";")[0]
+                b64 = base64.b64encode(resp.content).decode()
+                company_logo_html = f'<img class="company-logo" src="data:{ct};base64,{b64}" alt="Company logo">'
+        except Exception:
+            pass
     banner = BANNER_HTML_TEMPLATE.format(
         company_name=company_name,
         headline=headline,
@@ -1053,7 +1062,7 @@ def build_html_page(company_name: str, headline: str, subheadline: str,
   <div class="bottom-band">
     <div class="cta">
       Open to 15 minutes next week to map this to your current process?
-      <span>{rep["name"]} &nbsp;|&nbsp; {rep["email"]} &nbsp;|&nbsp; {rep["phone"]} &nbsp;|&nbsp; <a href="https://www.netsuite.com/portal/demo.shtml" style="color:#D6B66A;">Request a Demo</a></span>
+      <span>{rep["name"]} &nbsp;|&nbsp; {rep["email"]} &nbsp;|&nbsp; {rep["phone"]} &nbsp;|&nbsp; <a href="https://www.netsuite.com/portal/resource/demo.shtml" style="color:#D6B66A;">Request a Demo</a></span>
     </div>
   </div>
 </div>
