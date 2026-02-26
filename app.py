@@ -67,11 +67,7 @@ with st.form("generator"):
     ])
     st.markdown("---")
     st.caption("Optional — add context to sharpen the output")
-    current_system = st.selectbox("Current System (if known)", [
-        "Unknown", "QuickBooks", "Sage", "Great Plains / Dynamics GP",
-        "Microsoft Dynamics 365", "SAP Business One", "Epicor",
-        "Acumatica", "Excel / Spreadsheets", "Other"
-    ])
+    current_system = st.text_input("Current System (if known)", placeholder="e.g. QuickBooks, Sage, Great Plains, Excel...")
     rep_notes = st.text_area("What do you know about this company?",
         placeholder="e.g. CFO mentioned they're struggling with month-end close, recently opened a 3rd location, looking to replace QuickBooks by Q3...",
         height=100)
@@ -103,7 +99,7 @@ if submitted:
             "web address": website,
             "vertical": vertical,
             "sales rep": rep_name,
-            "current system": current_system if current_system != "Unknown" else "",
+            "current system": current_system,
             "rep notes": rep_notes,
         }
         content = generate_content(
