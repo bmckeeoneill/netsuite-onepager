@@ -16,13 +16,23 @@ def check_password():
         st.session_state.authenticated = False
     if st.session_state.authenticated:
         return True
+    st.markdown("""
+<style>
+.gif-bg {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+</style>
+<img class="gif-bg" src="https://media1.tenor.com/m/2nTscZx5cRwAAAAd/everything%27s-computer-trump.gif">
+""", unsafe_allow_html=True)
     st.title("NetSuite One-Pager Generator")
     pwd = st.text_input("Enter passcode", type="password")
-    if st.button("Enter"):
+    if st.button("Enter") or pwd:
         if pwd == os.environ.get("APP_PASSCODE", "netsuite2026"):
             st.session_state.authenticated = True
             st.rerun()
-        else:
+        elif pwd:
             st.error("Incorrect passcode")
     return False
 
