@@ -58,6 +58,12 @@ REP_CONTACTS = {
         "email": "ross.b.zapalac@oracle.com",
         "phone": "(832) 229-8103"
     },
+    "andrew eisinger": {
+        "name": "Andrew Eisinger",
+        "title": "Account Executive",
+        "email": "andrew.eisinger@oracle.com",
+        "phone": "(415) 847-5061"
+    },
 }
 
 VERTICAL_INTEL = {
