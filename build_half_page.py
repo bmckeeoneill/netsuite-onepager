@@ -1068,9 +1068,10 @@ def build_html_page(company_name: str, headline: str, subheadline: str,
 
 def html_to_pdf(html: str, path: str):
     with sync_playwright() as pw:
-        browser = pw.chromium.launch()
+        browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = browser.new_page()
-        page.set_content(html, wait_until="networkidle")
+        page.set_content(html, wait_until="domcontentloaded")
+        page.wait_for_timeout(1000)
         page.pdf(path=path, width="8.5in", height="5.5in", print_background=True)
         browser.close()
 
