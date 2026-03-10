@@ -137,9 +137,3 @@ if submitted:
         file_name=filename,
         mime="application/pdf"
     )
-    st.download_button(
-        label="⬇️ Download HTML (open in browser → Print → Save as PDF)",
-        data=html.encode("utf-8"),
-        file_name=safe_filename(company_name) + "_half.html",
-        mime="text/html"
-    )

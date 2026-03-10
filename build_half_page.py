@@ -1067,14 +1067,10 @@ def build_html_page(company_name: str, headline: str, subheadline: str,
 
 
 def html_to_pdf(html: str, path: str):
-    import tempfile as _tempfile
-    with _tempfile.NamedTemporaryFile(suffix=".html", delete=False, mode="w", encoding="utf-8") as f:
-        f.write(html)
-        html_path = f.name
     with sync_playwright() as pw:
         browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = browser.new_page()
-        page.goto(f"file://{html_path}", wait_until="load")
+        page.set_content(html, wait_until="domcontentloaded")
         page.wait_for_timeout(1000)
         page.pdf(path=path, width="8.5in", height="5.5in", print_background=True)
         browser.close()
