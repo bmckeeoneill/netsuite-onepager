@@ -860,7 +860,7 @@ Return only valid JSON, no markdown fences.
 def generate_headline(anthropic_client: Anthropic, content_brief: str) -> dict:
 
     msg = anthropic_client.messages.create(
-        model="claude-sonnet-4-5",
+        model="claude-sonnet-4-6",
         max_tokens=300,
         temperature=0.5,
         system=CLAUDE_SYSTEM_PROMPT,
