@@ -186,6 +186,7 @@ BANNER_HTML_TEMPLATE = """
 """
 
 PAGE_CSS = """
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 @page { size: 8.5in 5.5in; margin: 0.35in; }
 html, body { margin: 0; padding: 0; }
 
@@ -195,7 +196,7 @@ html, body { margin: 0; padding: 0; }
   overflow: hidden;
   box-sizing: border-box;
   background: #F4F7F8;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-family: "Inter", "Liberation Sans", Arial, sans-serif;
   display: flex;
   flex-direction: column;
 }
@@ -1070,8 +1071,8 @@ def html_to_pdf(html: str, path: str):
     with sync_playwright() as pw:
         browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = browser.new_page()
-        page.set_content(html, wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
+        page.set_content(html, wait_until="networkidle")
+        page.wait_for_timeout(500)
         page.pdf(path=path, width="8.5in", height="5.5in", print_background=True)
         browser.close()
 
